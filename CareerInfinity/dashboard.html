@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareerInfinity | Career Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --blue: #1746a2;
+      --blue-dark: #102e69;
+      --blue-light: #eaf1ff;
+      --page: #f4f7fc;
+      --text: #172b4d;
+      --muted: #72809b;
+      --border: #e7ecf5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--page);
+      color: var(--text);
+    }
+
+    .sidebar {
+      width: 255px;
+      position: fixed;
+      inset: 0 auto 0 0;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 25px 16px;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      overflow-y: auto;
+    }
+
+    .brand {
+      color: var(--blue);
+      font-size: 22px;
+      font-weight: 800;
+      padding: 0 10px 28px;
+    }
+
+    .brand i { margin-right: 8px; }
+
+    .nav-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      padding: 8px 12px 12px;
+    }
+
+    .nav-link {
+      color: #5d6b84;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-bottom: 5px;
+      border-radius: 9px;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .nav-link i { font-size: 17px; }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--blue-light);
+      color: var(--blue);
+      font-weight: bold;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 20px;
+    }
+
+    .main {
+      margin-left: 255px;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: white;
+      padding: 17px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      gap: 15px;
+    }
+
+    .topbar h5 {
+      margin: 0;
+      font-weight: 750;
+    }
+
+    .topbar small { color: var(--muted); }
+
+    .user-avatar {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      background: var(--blue-light);
+      color: var(--blue);
+      border-radius: 50%;
+      font-size: 20px;
+    }
+
+    .content { padding: 30px; }
+
+    .welcome {
+      background: linear-gradient(120deg, #12377f, #2767d9);
+      border-radius: 18px;
+      padding: 30px;
+      color: white;
+      margin-bottom: 25px;
+    }
+
+    .welcome h2 {
+      font-size: 27px;
+      font-weight: 750;
+    }
+
+    .welcome p {
+      color: #e0eaff;
+      margin-bottom: 0;
+    }
+
+    .welcome-icon {
+      font-size: 65px;
+      opacity: 0.85;
+    }
+
+    .section-heading {
+      font-size: 19px;
+      font-weight: 750;
+      margin: 25px 0 16px;
+    }
+
+    .stat-card, .panel, .feature-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 21px;
+      height: 100%;
+    }
+
+    .stat-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      background: var(--blue-light);
+      color: var(--blue);
+      border-radius: 11px;
+      font-size: 21px;
+      margin-bottom: 15px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat-value {
+      font-size: 27px;
+      font-weight: 800;
+      margin: 5px 0;
+    }
+
+    .stat-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .progress {
+      height: 8px;
+      background: #edf1f8;
+      border-radius: 20px;
+    }
+
+    .progress-bar {
+      background: var(--blue);
+      border-radius: 20px;
+    }
+
+    .feature-card {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(24, 61, 120, 0.09);
+    }
+
+    .feature-card h6 {
+      font-weight: 750;
+      margin: 12px 0 7px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .feature-card .arrow {
+      color: var(--blue);
+      font-size: 20px;
+    }
+
+    .primary-btn {
+      background: var(--blue);
+      border: 0;
+      color: white;
+      border-radius: 9px;
+      padding: 10px 17px;
+    }
+
+    .primary-btn:hover {
+      background: var(--blue-dark);
+      color: white;
+    }
+
+    .muted { color: var(--muted); }
+
+    .feature-page-icon {
+      font-size: 42px;
+      color: var(--blue);
+      margin-bottom: 15px;
+    }
+
+    .mobile-toggle { display: none; }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 225px; }
+      .main { margin-left: 225px; }
+      .content { padding: 20px; }
+      .topbar { padding: 16px 20px; }
+    }
+
+    @media (max-width: 650px) {
+      .sidebar {
+        width: 255px;
+        transform: translateX(-100%);
+        transition: transform 0.25s;
+        box-shadow: none;
+        box-shadow: none;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 5px 0 25px #0002;
+      }
+
+      .main { margin-left: 0; }
+      .content { padding: 16px; }
+      .topbar { padding: 14px 16px; }
+      .mobile-toggle { display: inline-block; }
+      .welcome { padding: 23px; }
+      .welcome h2 { font-size: 23px; }
+      .welcome-icon { font-size: 42px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <i class="bi bi-stars"></i>CareerInfinity
+    </div>
+
+    <div class="nav-label">MAIN MENU</div>
+
+    <a class="nav-link active" data-page="dashboard">
+      <i class="bi bi-grid-1x2-fill"></i> Dashboard
+    </a>
+
+    <a class="nav-link" data-page="career">
+      <i class="bi bi-compass-fill"></i> Career Intelligence
+    </a>
+
+    <a class="nav-link" data-page="skills">
+      <i class="bi bi-bar-chart-fill"></i> Skill Analysis
+    </a>
+
+    <a class="nav-link" data-page="learning">
+      <i class="bi bi-mortarboard-fill"></i> Learning Path
+    </a>
+
+    <a class="nav-link" data-page="resume">
+      <i class="bi bi-file-earmark-person-fill"></i> Resume Analyzer
+    </a>
+
+    <a class="nav-link" data-page="interview">
+      <i class="bi bi-mic-fill"></i> Mock Interview
+    </a>
+
+    <a class="nav-link" data-page="jobs">
+      <i class="bi bi-briefcase-fill"></i> Job Recommendations
+    </a>
+
+    <a class="nav-link" data-page="placements">
+      <i class="bi bi-building-fill"></i> Placement Drives
+    </a>
+
+    <a class="nav-link" data-page="achievements">
+      <i class="bi bi-award-fill"></i> Assessments & Certificates
+    </a>
+
+    <a class="nav-link" data-page="settings">
+      <i class="bi bi-gear-fill"></i> Settings & Help
+    </a>
+
+    <div class="sidebar-bottom">
+      <div class="nav-label">ACCOUNT</div>
+      <a class="nav-link" id="logoutBtn">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main">
+    <header class="topbar">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-light mobile-toggle" id="menuToggle"
+                aria-label="Toggle navigation">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+        <div>
+          <h5 id="pageTitle">Dashboard</h5>
+          <small>Career growth starts here</small>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <div class="text-end d-none d-sm-block">
+          <div id="userName" class="fw-bold">Loading...</div>
+          <small id="userEmail">Checking account...</small>
+        </div>
+        <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+      </div>
+    </header>
+
+    <div class="content" id="pageContent">
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="muted mt-3">Loading your dashboard...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FIREBASE AUTHENTICATION AND PAGE NAVIGATION -->
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtPNgsU-UNxrTsYRODcmIF8FhEgGjRIKc",
+      authDomain: "carrerinfinity-28ab1.firebaseapp.com",
+      projectId: "carrerinfinity-28ab1",
+      storageBucket: "carrerinfinity-28ab1.firebasestorage.app",
+      messagingSenderId: "70680959232",
+      appId: "1:70680959232:web:9e4edfb7221a523a5c3be5",
+      measurementId: "G-Q747T1QPT2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const pageContent = document.getElementById("pageContent");
+    const pageTitle = document.getElementById("pageTitle");
+    const sidebar = document.getElementById("sidebar");
+
+    const pages = {
+      dashboard: {
+        title: "Dashboard",
+        icon: "bi-grid-1x2-fill",
+        description: "Your personal overview of career readiness and learning progress."
+      },
+      career: {
+        title: "Career Intelligence",
+        icon: "bi-compass-fill",
+        description: "Explore careers that match your skills, interests, and goals."
+      },
+      skills: {
+        title: "Skill Analysis",
+        icon: "bi-bar-chart-fill",
+        description: "Review your skills, proficiency levels, and improvement areas."
+      },
+      learning: {
+        title: "Learning Path",
+        icon: "bi-mortarboard-fill",
+        description: "Organize courses and track your learning milestones."
+      },
+      resume: {
+        title: "Resume Analyzer",
+        icon: "bi-file-earmark-person-fill",
+        description: "Prepare your resume for the roles you want to pursue."
+      },
+      interview: {
+        title: "Mock Interview",
+        icon: "bi-mic-fill",
+        description: "Practice interview questions and build confidence."
+      },
+      jobs: {
+        title: "Job Recommendations",
+        icon: "bi-briefcase-fill",
+        description: "Explore job opportunities aligned with your career goals."
+      },
+      placements: {
+        title: "Placement Drives",
+        icon: "bi-building-fill",
+        description: "Keep track of company drives, eligibility, and deadlines."
+      },
+      achievements: {
+        title: "Assessments & Certificates",
+        icon: "bi-award-fill",
+        description: "Keep your assessment results and learning achievements together."
+      },
+      settings: {
+        title: "Settings & Help",
+        icon: "bi-gear-fill",
+        description: "Manage your account and find support."
+      }
+    };
+
+    function renderDashboard(user) {
+      const displayName =
+        user.displayName || user.email?.split("@")[0] || "Learner";
+
+      pageContent.innerHTML = `
+        <section class="welcome">
+          <div class="row align-items-center">
+            <div class="col-9">
+              <p class="mb-2">WELCOME TO CAREERINFINITY</p>
+              <h2>Hello, ${escapeHTML(displayName)}! 👋</h2>
+              <p>Build your skills. Discover your path. Shape your future.</p>
+            </div>
+            <div class="col-3 text-end">
+              <i class="bi bi-rocket-takeoff-fill welcome-icon"></i>
+            </div>
+          </div>
+        </section>
+
+        <h5 class="section-heading mt-0">Your Career Overview</h5>
+
+        <div class="row g-3">
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="bi bi-bullseye"></i></div>
+              <div class="stat-label">Career Match Score</div>
+              <div class="stat-value">--</div>
+              <div class="stat-note">Complete your profile to calculate</div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
+              <div class="stat-label">Profile Strength</div>
+              <div class="stat-value">--</div>
+              <div class="stat-note">Profile assessment not started</div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+              <div class="stat-label">Skills Assessed</div>
+              <div class="stat-value">0</div>
+              <div class="stat-note">Add skills to get started</div>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="bi bi-award-fill"></i></div>
+              <div class="stat-label">Certificates</div>
+              <div class="stat-value">0</div>
+              <div class="stat-note">Track your achievements</div>
+            </div>
+          </div>
+        </div>
+
+        <h5 class="section-heading">Your Progress</h5>
+        <div class="panel">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="fw-bold">Career readiness</span>
+            <span class="muted">Not assessed</span>
+          </div>
+          <div class="progress mb-3">
+            <div class="progress-bar" style="width:0%"></div>
+          </div>
+          <p class="muted small mb-0">
+            Your progress will appear here as you complete profile and learning activities.
+          </p>
+        </div>
+
+        <h5 class="section-heading">Explore Your Platform</h5>
+        <div class="row g-3">
+          ${Object.entries(pages)
+            .filter(([key]) => key !== "dashboard")
+            .map(([key, page]) => `
+              <div class="col-12 col-sm-6 col-xl-4">
+                <div class="feature-card" data-card-page="${key}" role="button" tabindex="0">
+                  <div class="stat-icon"><i class="bi ${page.icon}"></i></div>
+                  <h6>${page.title}</h6>
+                  <p>${page.description}</p>
+                  <span class="arrow"><i class="bi bi-arrow-right"></i></span>
+                </div>
+              </div>
+            `).join("")}
+        </div>
+      `;
+    }
+
+    function renderFeature(key) {
+      if (key === "dashboard") {
+        renderDashboard(auth.currentUser);
+        return;
+      }
+
+      const page = pages[key];
+      if (!page) return;
+
+      pageContent.innerHTML = `
+        <div class="panel">
+          <div class="feature-page-icon">
+            <i class="bi ${page.icon}"></i>
+          </div>
+          <h3 class="fw-bold">${page.title}</h3>
+          <p class="muted">${page.description}</p>
+          <hr>
+          <h6 class="fw-bold mt-4">Coming in the next development stage</h6>
+          <p class="muted">
+            This section is part of CareerInfinity. We'll add its forms,
+            functionality, and data connections step by step.
+          </p>
+          <button class="primary-btn mt-2" id="backToDashboard">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+          </button>
+        </div>
+      `;
+
+      document.getElementById("backToDashboard").addEventListener("click", () => {
+        navigateTo("dashboard");
+      });
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+    }
+
+    function navigateTo(key) {
+      if (!pages[key]) return;
+
+      document.querySelectorAll(".nav-link[data-page]").forEach(link => {
+        link.classList.toggle("active", link.dataset.page === key);
+      });
+
+      pageTitle.textContent = pages[key].title;
+      sidebar.classList.remove("open");
+      renderFeature(key);
+    }
+
+    document.querySelectorAll(".nav-link[data-page]").forEach(link => {
+      link.addEventListener("click", () => {
+        navigateTo(link.dataset.page);
+      });
+    });
+
+    pageContent.addEventListener("click", event => {
+      const card = event.target.closest("[data-card-page]");
+      if (card) navigateTo(card.dataset.cardPage);
+    });
+
+    pageContent.addEventListener("keydown", event => {
+      const card = event.target.closest("[data-card-page]");
+      if (card && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        navigateTo(card.dataset.cardPage);
+      }
+    });
+
+    document.getElementById("menuToggle").addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Could not log out. Please try again.");
+        console.error(error);
+      }
+    });
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("userName").textContent =
+        user.displayName || user.email?.split("@")[0] || "Learner";
+
+      document.getElementById("userEmail").textContent =
+        user.email || "";
+
+      navigateTo("dashboard");
+    });
+  </script>
+
+</body>
+</html>
