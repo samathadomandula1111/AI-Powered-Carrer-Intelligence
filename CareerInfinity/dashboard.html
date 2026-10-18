@@ -1,648 +1,590 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CareerInfinity | Career Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CareerInfinity | Dashboard</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-  <style>
-    :root {
-      --blue: #1746a2;
-      --blue-dark: #102e69;
-      --blue-light: #eaf1ff;
-      --page: #f4f7fc;
-      --text: #172b4d;
-      --muted: #72809b;
-      --border: #e7ecf5;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--page);
-      color: var(--text);
-    }
-
-    .sidebar {
-      width: 255px;
-      position: fixed;
-      inset: 0 auto 0 0;
-      background: #fff;
-      border-right: 1px solid var(--border);
-      padding: 25px 16px;
-      display: flex;
-      flex-direction: column;
-      z-index: 10;
-      overflow-y: auto;
-    }
-
-    .brand {
-      color: var(--blue);
-      font-size: 22px;
-      font-weight: 800;
-      padding: 0 10px 28px;
-    }
-
-    .brand i { margin-right: 8px; }
-
-    .nav-label {
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 1.5px;
-      padding: 8px 12px 12px;
-    }
-
-    .nav-link {
-      color: #5d6b84;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      margin-bottom: 5px;
-      border-radius: 9px;
-      text-decoration: none;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .nav-link i { font-size: 17px; }
-
-    .nav-link:hover,
-    .nav-link.active {
-      background: var(--blue-light);
-      color: var(--blue);
-      font-weight: bold;
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      padding-top: 20px;
-    }
-
-    .main {
-      margin-left: 255px;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      background: white;
-      padding: 17px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      gap: 15px;
-    }
-
-    .topbar h5 {
-      margin: 0;
-      font-weight: 750;
-    }
-
-    .topbar small { color: var(--muted); }
-
-    .user-avatar {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      background: var(--blue-light);
-      color: var(--blue);
-      border-radius: 50%;
-      font-size: 20px;
-    }
-
-    .content { padding: 30px; }
-
-    .welcome {
-      background: linear-gradient(120deg, #12377f, #2767d9);
-      border-radius: 18px;
-      padding: 30px;
-      color: white;
-      margin-bottom: 25px;
-    }
-
-    .welcome h2 {
-      font-size: 27px;
-      font-weight: 750;
-    }
-
-    .welcome p {
-      color: #e0eaff;
-      margin-bottom: 0;
-    }
-
-    .welcome-icon {
-      font-size: 65px;
-      opacity: 0.85;
-    }
-
-    .section-heading {
-      font-size: 19px;
-      font-weight: 750;
-      margin: 25px 0 16px;
-    }
-
-    .stat-card, .panel, .feature-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 21px;
-      height: 100%;
-    }
-
-    .stat-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      background: var(--blue-light);
-      color: var(--blue);
-      border-radius: 11px;
-      font-size: 21px;
-      margin-bottom: 15px;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .stat-value {
-      font-size: 27px;
-      font-weight: 800;
-      margin: 5px 0;
-    }
-
-    .stat-note {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .progress {
-      height: 8px;
-      background: #edf1f8;
-      border-radius: 20px;
-    }
-
-    .progress-bar {
-      background: var(--blue);
-      border-radius: 20px;
-    }
-
-    .feature-card {
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(24, 61, 120, 0.09);
-    }
-
-    .feature-card h6 {
-      font-weight: 750;
-      margin: 12px 0 7px;
-    }
-
-    .feature-card p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .feature-card .arrow {
-      color: var(--blue);
-      font-size: 20px;
-    }
-
-    .primary-btn {
-      background: var(--blue);
-      border: 0;
-      color: white;
-      border-radius: 9px;
-      padding: 10px 17px;
-    }
-
-    .primary-btn:hover {
-      background: var(--blue-dark);
-      color: white;
-    }
-
-    .muted { color: var(--muted); }
-
-    .feature-page-icon {
-      font-size: 42px;
-      color: var(--blue);
-      margin-bottom: 15px;
-    }
-
-    .mobile-toggle { display: none; }
-
-    @media (max-width: 900px) {
-      .sidebar { width: 225px; }
-      .main { margin-left: 225px; }
-      .content { padding: 20px; }
-      .topbar { padding: 16px 20px; }
-    }
-
-    @media (max-width: 650px) {
-      .sidebar {
-        width: 255px;
-        transform: translateX(-100%);
-        transition: transform 0.25s;
-        box-shadow: none;
-        box-shadow: none;
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-        box-shadow: 5px 0 25px #0002;
-      }
-
-      .main { margin-left: 0; }
-      .content { padding: 16px; }
-      .topbar { padding: 14px 16px; }
-      .mobile-toggle { display: inline-block; }
-      .welcome { padding: 23px; }
-      .welcome h2 { font-size: 23px; }
-      .welcome-icon { font-size: 42px; }
-    }
-  </style>
+<style>
+:root {
+  --bg:#071426; --panel:#0d2038; --panel2:#102744;
+  --line:#284361; --text:#edf5ff; --muted:#9db2cc;
+  --blue:#65baff; --green:#62dfb8;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:Arial, sans-serif;
+}
+button,input,textarea { font:inherit; }
+button { cursor:pointer; }
+.app { display:grid; grid-template-columns:245px 1fr; min-height:100vh; }
+.sidebar {
+  padding:22px 14px; background:#081a2e;
+  border-right:1px solid var(--line);
+}
+.brand { font-size:22px; font-weight:bold; padding:12px; margin-bottom:22px; }
+.brand span { color:var(--blue); }
+.nav button {
+  display:block; width:100%; text-align:left; padding:12px;
+  margin:4px 0; border:0; border-radius:9px;
+  background:transparent; color:#bfd0e4;
+}
+.nav button:hover,.nav button.active { background:#173b62; color:white; }
+main { padding:28px; min-width:0; }
+header { display:flex; justify-content:space-between; gap:15px; flex-wrap:wrap; }
+h1 { font-size:30px; margin:8px 0; }
+h2 { font-size:19px; }
+h3 { font-size:15px; }
+.muted,.small { color:var(--muted); }
+.small { font-size:12px; }
+.grid { display:grid; gap:15px; }
+.stats { grid-template-columns:repeat(4,minmax(0,1fr)); margin:24px 0; }
+.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.card {
+  background:var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:19px; min-width:0;
+}
+.number { font-size:30px; font-weight:bold; margin:12px 0; }
+.progress { background:#203650; height:8px; border-radius:20px; overflow:hidden; }
+.progress span { display:block; height:100%; background:var(--blue); }
+.btn {
+  padding:11px 15px; border:0; border-radius:8px;
+  background:#247bd0; color:white; font-weight:bold;
+}
+.btn.secondary { background:#193957; border:1px solid #315577; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.view { display:none; }
+.view.active { display:block; }
+.dropzone {
+  display:block; border:2px dashed #4779a5; border-radius:12px;
+  padding:25px 12px; text-align:center; cursor:pointer;
+  background:#0a1c31;
+}
+.dropzone input { display:none; }
+.field {
+  display:block; width:100%; padding:11px; margin:8px 0 15px;
+  color:white; background:#08182a; border:1px solid #31516f;
+  border-radius:8px;
+}
+.rowitem { padding:14px 0; border-bottom:1px solid var(--line); }
+.tag {
+  display:inline-block; margin:3px; padding:5px 8px;
+  border-radius:6px; background:#173b60; color:#b6dcff;
+  font-size:12px;
+}
+.status { margin-top:12px; white-space:pre-wrap; font-size:13px; }
+.error { color:#ff9999; }
+.success { color:var(--green); }
+a { color:#83c8ff; }
+.featuregrid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.feature {
+  text-align:left; color:white; padding:18px; background:var(--panel);
+  border:1px solid var(--line); border-radius:12px;
+}
+.feature:hover { border-color:var(--blue); }
+.notice {
+  padding:12px; background:#122d4a; border:1px solid #315577;
+  border-radius:9px; color:#d7e9ff; font-size:13px; line-height:1.6;
+}
+@media(max-width:1000px) {
+  .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .two { grid-template-columns:1fr; }
+  .featuregrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:650px) {
+  .app { grid-template-columns:1fr; }
+  .sidebar { border-right:0; border-bottom:1px solid var(--line); }
+  main { padding:16px; }
+  .featuregrid { grid-template-columns:1fr; }
+  h1 { font-size:25px; }
+}
+</style>
 </head>
 
 <body>
-   <h1>CareerInfinity Dashboard</h1>
-  <!-- SIDEBAR NAVIGATION -->
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <i class="bi bi-stars"></i>CareerInfinity
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">✦ Career<span>Infinity</span></div>
+  <nav class="nav" id="navigation">
+    <button class="active" data-view="dashboard">▦ Dashboard</button>
+    <button data-view="career">✧ Career Intelligence</button>
+    <button data-view="skills">▤ Skill Analysis</button>
+    <button data-view="learning">⌘ Learning Path</button>
+    <button data-view="resume">▣ Resume Analyzer</button>
+    <button data-view="interview">◉ Mock Interview</button>
+    <button data-view="jobs">▰ Job Recommendations</button>
+    <button data-view="drives">▣ Placement Drives</button>
+    <button data-view="certificates">♜ Assessments & Certificates</button>
+    <button data-view="settings">⚙ Settings & Help</button>
+  </nav>
+</aside>
+
+<main>
+<header>
+  <div>
+    <div class="muted small">AI-POWERED CAREER PLATFORM</div>
+    <h1 id="pageTitle">Your career dashboard</h1>
+    <p class="muted" id="welcome">Build skills. Find your direction. Grow.</p>
+  </div>
+  <div>
+    <span id="userEmail" class="small">Checking login...</span>
+    <button class="btn secondary" id="logout">Log out</button>
+  </div>
+</header>
+
+<!-- 1. DASHBOARD -->
+<section class="view active" id="view-dashboard">
+  <div class="grid stats">
+    <div class="card">
+      <div class="muted">Career match</div>
+      <div class="number" id="matchScore">--%</div>
+      <div class="small">From resume skill matches</div>
     </div>
-
-    <div class="nav-label">MAIN MENU</div>
-
-    <a class="nav-link active" data-page="dashboard">
-      <i class="bi bi-grid-1x2-fill"></i> Dashboard
-    </a>
-
-    <a class="nav-link" data-page="career">
-      <i class="bi bi-compass-fill"></i> Career Intelligence
-    </a>
-
-    <a class="nav-link" data-page="skills">
-      <i class="bi bi-bar-chart-fill"></i> Skill Analysis
-    </a>
-
-    <a class="nav-link" data-page="learning">
-      <i class="bi bi-mortarboard-fill"></i> Learning Path
-    </a>
-
-    <a class="nav-link" data-page="resume">
-      <i class="bi bi-file-earmark-person-fill"></i> Resume Analyzer
-    </a>
-
-    <a class="nav-link" data-page="interview">
-      <i class="bi bi-mic-fill"></i> Mock Interview
-    </a>
-
-    <a class="nav-link" data-page="jobs">
-      <i class="bi bi-briefcase-fill"></i> Job Recommendations
-    </a>
-
-    <a class="nav-link" data-page="placements">
-      <i class="bi bi-building-fill"></i> Placement Drives
-    </a>
-
-    <a class="nav-link" data-page="achievements">
-      <i class="bi bi-award-fill"></i> Assessments & Certificates
-    </a>
-
-    <a class="nav-link" data-page="settings">
-      <i class="bi bi-gear-fill"></i> Settings & Help
-    </a>
-
-    <div class="sidebar-bottom">
-      <div class="nav-label">ACCOUNT</div>
-      <a class="nav-link" id="logoutBtn">
-        <i class="bi bi-box-arrow-right"></i> Logout
-      </a>
+    <div class="card">
+      <div class="muted">Profile strength</div>
+      <div class="number" id="profileScore">0%</div>
+      <div class="progress"><span id="profileBar" style="width:0%"></span></div>
     </div>
-  </aside>
-
-  <!-- MAIN AREA -->
-  <main class="main">
-    <header class="topbar">
-      <div class="d-flex align-items-center gap-3">
-        <button class="btn btn-light mobile-toggle" id="menuToggle"
-                aria-label="Toggle navigation">
-          <i class="bi bi-list fs-4"></i>
-        </button>
-        <div>
-          <h5 id="pageTitle">Dashboard</h5>
-          <small>Career growth starts here</small>
-        </div>
-      </div>
-
-      <div class="d-flex align-items-center gap-3">
-        <div class="text-end d-none d-sm-block">
-          <div id="userName" class="fw-bold">Loading...</div>
-          <small id="userEmail">Checking account...</small>
-        </div>
-        <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
-      </div>
-    </header>
-
-    <div class="content" id="pageContent">
-      <div class="text-center py-5">
-        <div class="spinner-border text-primary"></div>
-        <p class="muted mt-3">Loading your dashboard...</p>
-      </div>
+    <div class="card">
+      <div class="muted">Skills detected</div>
+      <div class="number" id="skillCount">0</div>
+      <div class="small">From your uploaded resume</div>
     </div>
-  </main>
+    <div class="card">
+      <div class="muted">Learning progress</div>
+      <div class="number" id="learningScore">0%</div>
+      <div class="progress"><span id="learningBar" style="width:0%"></span></div>
+    </div>
+  </div>
 
-  <!-- FIREBASE AUTHENTICATION AND PAGE NAVIGATION -->
-  <script type="module">
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  <div class="grid two">
+    <div class="card">
+      <h2>Start with your resume</h2>
+      <p class="muted">Upload your PDF or DOCX to identify skills and receive career suggestions.</p>
+      <label class="dropzone" for="resumeFile">
+        <div style="font-size:30px;color:var(--blue)">⇧</div>
+        <strong>Choose your resume</strong>
+        <p class="small">PDF or DOCX · Maximum 5 MB</p>
+        <input type="file" id="resumeFile" accept=".pdf,.docx">
+      </label>
+      <p id="fileName" class="small">No file selected</p>
+      <button class="btn" id="uploadBtn" disabled>Upload & Analyze</button>
+      <div id="uploadStatus" class="status" aria-live="polite"></div>
+    </div>
+    <div class="card">
+      <h2>Your next steps</h2>
+      <div class="rowitem"><strong>01. Analyze your resume</strong><p class="muted">Discover your current skills.</p></div>
+      <div class="rowitem"><strong>02. Improve your skills</strong><p class="muted">Follow a learning path.</p></div>
+      <div class="rowitem"><strong>03. Prepare for interviews</strong><p class="muted">Practice common questions.</p></div>
+    </div>
+  </div>
 
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  <h2>Explore all career tools</h2>
+  <div class="grid featuregrid">
+    <button class="feature" data-go="career">✧ <h3>Career Intelligence</h3>Explore career matches.</button>
+    <button class="feature" data-go="skills">▤ <h3>Skill Analysis</h3>Review detected skills.</button>
+    <button class="feature" data-go="learning">⌘ <h3>Learning Path</h3>Explore courses.</button>
+    <button class="feature" data-go="resume">▣ <h3>Resume Analyzer</h3>Get resume feedback.</button>
+    <button class="feature" data-go="interview">◉ <h3>Mock Interview</h3>Practice questions.</button>
+    <button class="feature" data-go="jobs">▰ <h3>Job Recommendations</h3>Explore example roles.</button>
+    <button class="feature" data-go="drives">▣ <h3>Placement Drives</h3>Track opportunities.</button>
+    <button class="feature" data-go="certificates">♜ <h3>Assessments & Certificates</h3>Track credentials.</button>
+    <button class="feature" data-go="settings">⚙ <h3>Settings & Help</h3>Account and support.</button>
+  </div>
+</section>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtPNgsU-UNxrTsYRODcmIF8FhEgGjRIKc",
-      authDomain: "carrerinfinity-28ab1.firebaseapp.com",
-      projectId: "carrerinfinity-28ab1",
-      storageBucket: "carrerinfinity-28ab1.firebasestorage.app",
-      messagingSenderId: "70680959232",
-      appId: "1:70680959232:web:9e4edfb7221a523a5c3be5",
-      measurementId: "G-Q747T1QPT2"
-    };
+<!-- 2. CAREER INTELLIGENCE -->
+<section class="view" id="view-career">
+  <div class="card">
+    <h2>Career Intelligence</h2>
+    <p class="muted">Recommendations based on skills detected in your resume.</p>
+    <div id="careerResults">Upload your resume to see personalized results.</div>
+  </div>
+</section>
 
+<!-- 3. SKILL ANALYSIS -->
+<section class="view" id="view-skills">
+  <div class="card">
+    <h2>Skill Analysis</h2>
+    <p class="muted">Estimated keyword levels are not formal proficiency test results.</p>
+    <div id="skillResults">Your detected skills will appear here.</div>
+  </div>
+</section>
+
+<!-- 4. LEARNING PATH -->
+<section class="view" id="view-learning">
+  <div class="grid two">
+    <div class="card">
+      <h2>Free learning resources</h2>
+      <div class="rowitem"><h3>Infosys Springboard</h3><p class="muted">AI, programming and professional skills.</p><a href="https://infyspringboard.onwingspan.com/" target="_blank" rel="noopener">Explore courses ↗</a></div>
+      <div class="rowitem"><h3>Microsoft Learn</h3><p class="muted">AI, cloud and data. Exams may cost extra.</p><a href="https://learn.microsoft.com/en-us/training/" target="_blank" rel="noopener">Explore courses ↗</a></div>
+      <div class="rowitem"><h3>Cisco Networking Academy</h3><p class="muted">Networking and cybersecurity courses.</p><a href="https://www.netacad.com/" target="_blank" rel="noopener">Explore courses ↗</a></div>
+      <div class="rowitem"><h3>Kaggle Learn</h3><p class="muted">Python and data learning exercises.</p><a href="https://www.kaggle.com/learn" target="_blank" rel="noopener">Explore courses ↗</a></div>
+    </div>
+    <div class="card">
+      <h2>My learning progress</h2>
+      <label><input type="checkbox" class="course"> Programming foundations completed</label><br><br>
+      <label><input type="checkbox" class="course"> AI or cloud course completed</label><br><br>
+      <label><input type="checkbox" class="course"> Cybersecurity course completed</label><br><br>
+      <label><input type="checkbox" class="course"> Python practice completed</label>
+      <p class="muted" id="courseCount">0 of 4 completed</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. RESUME ANALYZER -->
+<section class="view" id="view-resume">
+  <div class="grid two">
+    <div class="card">
+      <h2>Resume Analyzer</h2>
+      <p class="muted">Select a PDF or DOCX file to analyze it with the backend.</p>
+      <button class="btn secondary" id="chooseResume">Choose resume</button>
+      <p class="small" id="resumeFileName">No file selected</p>
+      <button class="btn" id="uploadBtn2" disabled>Upload & Analyze</button>
+      <div id="uploadStatus2" class="status" aria-live="polite"></div>
+    </div>
+    <div class="card">
+      <h2>Analysis results</h2>
+      <div id="resumeResults">Upload a resume to see results.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. MOCK INTERVIEW -->
+<section class="view" id="view-interview">
+  <div class="card">
+    <h2>Mock Interview</h2>
+    <label for="question" class="muted">Choose a question</label>
+    <select class="field" id="question">
+      <option>Tell me about yourself.</option>
+      <option>Describe a project you are proud of.</option>
+      <option>What technical skill are you improving?</option>
+      <option>Tell me about a problem you solved.</option>
+      <option>Why are you interested in this role?</option>
+    </select>
+    <textarea class="field" id="answer" rows="6" placeholder="Write your practice answer here..."></textarea>
+    <button class="btn" id="reviewAnswer">Review my answer</button>
+    <div id="answerFeedback" class="notice" style="display:none;margin-top:15px"></div>
+    <p class="small">This starter version provides a self-review checklist, not AI grading.</p>
+  </div>
+</section>
+
+<!-- 7. JOB RECOMMENDATIONS -->
+<section class="view" id="view-jobs">
+  <div class="notice">Example role categories only, not live vacancies. Check employers' official websites for current openings.</div>
+  <div class="grid two" style="margin-top:15px">
+    <div class="card"><h3>Junior Python Developer</h3><p class="muted">Python · SQL · Git</p></div>
+    <div class="card"><h3>Data Analyst Intern</h3><p class="muted">SQL · Excel · Python</p></div>
+    <div class="card"><h3>AI/ML Intern</h3><p class="muted">Python · AI · data</p></div>
+    <div class="card"><h3>Frontend Developer Intern</h3><p class="muted">HTML · CSS · JavaScript</p></div>
+    <div class="card"><h3>Cloud Support Associate</h3><p class="muted">Cloud · networking</p></div>
+    <div class="card"><h3>Technical Support Associate</h3><p class="muted">Troubleshooting · communication</p></div>
+  </div>
+</section>
+
+<!-- 8. PLACEMENT DRIVES -->
+<section class="view" id="view-drives">
+  <div class="card">
+    <h2>Placement Drive Tracker</h2>
+    <label for="company">Company</label>
+    <input class="field" id="company" placeholder="Company name">
+    <label for="driveDetails">Role, eligibility and deadline</label>
+    <input class="field" id="driveDetails" placeholder="Graduate trainee, 2027 batch...">
+    <button class="btn" id="addDrive">Add opportunity</button>
+    <div id="driveList"></div>
+  </div>
+</section>
+
+<!-- 9. ASSESSMENTS AND CERTIFICATES -->
+<section class="view" id="view-certificates">
+  <div class="card">
+    <h2>Assessments & Certificates</h2>
+    <p class="muted">Check provider terms; some exams or certificates may require payment.</p>
+    <div class="rowitem"><a href="https://infyspringboard.onwingspan.com/" target="_blank" rel="noopener">Infosys Springboard ↗</a></div>
+    <div class="rowitem"><a href="https://learn.microsoft.com/en-us/training/" target="_blank" rel="noopener">Microsoft Learn ↗</a></div>
+    <div class="rowitem"><a href="https://www.netacad.com/" target="_blank" rel="noopener">Cisco Networking Academy ↗</a></div>
+    <div class="rowitem"><a href="https://www.kaggle.com/learn" target="_blank" rel="noopener">Kaggle Learn ↗</a></div>
+    <h3>Add a completed certificate</h3>
+    <input class="field" id="certificateName" placeholder="Certificate name">
+    <button class="btn" id="addCertificate">Add certificate</button>
+    <div id="certificateList"></div>
+  </div>
+</section>
+
+<!-- 10. SETTINGS AND HELP -->
+<section class="view" id="view-settings">
+  <div class="card">
+    <h2>Account & Settings</h2>
+    <p class="muted">Signed-in email</p>
+    <p id="settingsEmail">Loading...</p>
+    <p class="muted">Firebase user ID</p>
+    <p id="settingsUid" style="overflow-wrap:anywhere">Loading...</p>
+    <div class="notice">Privacy: resume text is processed by your backend. This version does not permanently store the uploaded file. Avoid uploading sensitive personal documents.</div>
+    <h3>Help</h3>
+    <a href="https://firebase.google.com/docs/auth/web/start" target="_blank" rel="noopener">Firebase Authentication guide ↗</a><br><br>
+    <a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Flask documentation ↗</a>
+  </div>
+</section>
+</main>
+</div>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+/* Replace these placeholders with YOUR Firebase web app config. */
+const firebaseConfig = {
+  apiKey: "AIzaSyBtPNgsU-UNxrTsYRODcmIF8FhEgGjRIKc",
+  authDomain: "carrerinfinity-28ab1.firebaseapp.com",
+  projectId: "carrerinfinity-28ab1",
+  storageBucket: "carrerinfinity-28ab1.firebasestorage.app",
+  messagingSenderId: "70680959232",
+  appId: "1:70680959232:web:9e4edfb7221a523a5c3be5",
+  measurementId: "G-Q747T1QPT2"
+};
+
+/* Local Flask backend address. */
+const API_BASE = "http://127.0.0.1:5000";
+
+const $ = id => document.getElementById(id);
+const titles = {
+  dashboard:"Your career dashboard",
+  career:"Career Intelligence",
+  skills:"Skill Analysis",
+  learning:"Learning Path",
+  resume:"Resume Analyzer",
+  interview:"Mock Interview",
+  jobs:"Job Recommendations",
+  drives:"Placement Drives",
+  certificates:"Assessments & Certificates",
+  settings:"Settings & Help"
+};
+
+let auth;
+let currentUser = null;
+let analysisData = null;
+let selectedResume = null;
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[ch]);
+}
+
+function navigate(name) {
+  document.querySelectorAll(".view").forEach(section => {
+    section.classList.toggle("active", section.id === "view-" + name);
+  });
+  document.querySelectorAll("[data-view]").forEach(button => {
+    button.classList.toggle("active", button.dataset.view === name);
+  });
+  $("pageTitle").textContent = titles[name];
+}
+
+document.querySelectorAll("[data-view]").forEach(button =>
+  button.addEventListener("click", () => navigate(button.dataset.view))
+);
+document.querySelectorAll("[data-go]").forEach(button =>
+  button.addEventListener("click", () => navigate(button.dataset.go))
+);
+
+function status(id, message, type="") {
+  $(id).textContent = message;
+  $(id).className = "status " + type;
+}
+
+function selectFile(file) {
+  if (!file) return false;
+  const ext = file.name.toLowerCase().split(".").pop();
+  if (!["pdf","docx"].includes(ext)) {
+    alert("Please choose a PDF or DOCX resume.");
+    return false;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Maximum file size is 5 MB.");
+    return false;
+  }
+  selectedResume = file;
+  $("fileName").textContent = file.name;
+  $("resumeFileName").textContent = file.name;
+  $("uploadBtn").disabled = false;
+  $("uploadBtn2").disabled = false;
+  return true;
+}
+
+$("resumeFile").addEventListener("change", e => selectFile(e.target.files[0]));
+$("chooseResume").addEventListener("click", () => $("resumeFile").click());
+
+async function uploadResume(statusId, buttonId) {
+  if (!currentUser) {
+    status(statusId, "Please sign in first.", "error");
+    return;
+  }
+  if (!selectedResume) {
+    status(statusId, "Choose a resume first.", "error");
+    return;
+  }
+
+  const button = $(buttonId);
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Analyzing...";
+  status(statusId, "Uploading resume and extracting text...");
+
+  try {
+    const token = await currentUser.getIdToken();
+    const form = new FormData();
+    form.append("resume", selectedResume);
+
+    const response = await fetch(API_BASE + "/api/analyze-resume", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + token },
+      body: form
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Upload failed.");
+
+    analysisData = data;
+    renderAnalysis(data);
+    status(statusId, "Resume analyzed successfully.", "success");
+    $("welcome").textContent = "Resume analyzed. Explore your personalized results.";
+  } catch (error) {
+    status(statusId,
+      error.message + " Check that Flask is running at " + API_BASE,
+      "error");
+  } finally {
+    button.disabled = !selectedResume;
+    button.textContent = originalText;
+  }
+}
+
+$("uploadBtn").addEventListener("click", () => uploadResume("uploadStatus","uploadBtn"));
+$("uploadBtn2").addEventListener("click", () => uploadResume("uploadStatus2","uploadBtn2"));
+
+function renderAnalysis(data) {
+  const skills = data.skills || [];
+  const careers = data.career_matches || [];
+
+  $("matchScore").textContent = data.career_match_score + "%";
+  $("profileScore").textContent = data.profile_strength + "%";
+  $("profileBar").style.width = data.profile_strength + "%";
+  $("skillCount").textContent = skills.length;
+
+  $("resumeResults").innerHTML = `
+    <p><strong>Resume score: ${data.resume_score}/100</strong></p>
+    <div class="progress"><span style="width:${data.resume_score}%"></span></div>
+    <h3>Detected skills</h3>
+    ${skills.map(s => `<span class="tag">${escapeHTML(s.name)} — ${escapeHTML(s.level)}</span>`).join("") || "No known skills detected."}
+    <h3>Suggestions</h3>
+    <ul>${(data.suggestions || []).map(s => `<li>${escapeHTML(s)}</li>`).join("")}</ul>
+    <p class="small">${escapeHTML(data.disclaimer || "")}</p>
+  `;
+
+  $("skillResults").innerHTML = skills.map(s => `
+    <div class="rowitem">
+      <strong>${escapeHTML(s.name)}</strong> — ${escapeHTML(s.level)}
+      <div class="progress"><span style="width:${s.score}%"></span></div>
+    </div>
+  `).join("") || "No known skills detected.";
+
+  $("careerResults").innerHTML = careers.map(c => `
+    <div class="rowitem">
+      <h3>${escapeHTML(c.title)} — ${c.match}% skill match</h3>
+      <p class="muted">${escapeHTML(c.reason)}</p>
+      <p>Skills to develop: ${c.gaps.map(escapeHTML).join(", ") || "Continue developing your skills."}</p>
+    </div>
+  `).join("") || "No career matches available.";
+
+  navigate("resume");
+}
+
+document.querySelectorAll(".course").forEach(box => {
+  box.addEventListener("change", () => {
+    const boxes = [...document.querySelectorAll(".course")];
+    const completed = boxes.filter(b => b.checked).length;
+    const percent = Math.round(completed / boxes.length * 100);
+    $("learningScore").textContent = percent + "%";
+    $("learningBar").style.width = percent + "%";
+    $("courseCount").textContent = `${completed} of ${boxes.length} completed`;
+  });
+});
+
+$("reviewAnswer").addEventListener("click", () => {
+  if (!$("answer").value.trim()) {
+    alert("Write your practice answer first.");
+    return;
+  }
+  const feedback = $("answerFeedback");
+  feedback.style.display = "block";
+  feedback.innerHTML = `
+    <strong>Self-review checklist</strong>
+    <ul>
+      <li>Did you answer the question clearly?</li>
+      <li>Did you give a specific example?</li>
+      <li>Did you explain your own contribution?</li>
+      <li>Did you mention the result or what you learned?</li>
+      <li>Can you answer naturally in 60–90 seconds?</li>
+    </ul>`;
+});
+
+$("addDrive").addEventListener("click", () => {
+  const company = $("company").value.trim();
+  const details = $("driveDetails").value.trim();
+  if (!company || !details) return alert("Enter the company and opportunity details.");
+  const item = document.createElement("div");
+  item.className = "rowitem";
+  item.innerHTML = `<strong>${escapeHTML(company)}</strong><p>${escapeHTML(details)}</p>`;
+  $("driveList").prepend(item);
+  $("company").value = "";
+  $("driveDetails").value = "";
+});
+
+$("addCertificate").addEventListener("click", () => {
+  const name = $("certificateName").value.trim();
+  if (!name) return alert("Enter a certificate name.");
+  const item = document.createElement("div");
+  item.className = "rowitem";
+  item.textContent = "✓ " + name;
+  $("certificateList").prepend(item);
+  $("certificateName").value = "";
+});
+
+async function logout() {
+  if (auth) await signOut(auth);
+  window.location.href = "index.html";
+}
+$("logout").addEventListener("click", logout);
+
+try {
+  if (firebaseConfig.apiKey.startsWith("YOUR_") ||
+      firebaseConfig.projectId.startsWith("YOUR_")) {
+    $("userEmail").textContent = "Firebase setup required";
+    status("uploadStatus", "Add your Firebase web configuration before testing.", "error");
+  } else {
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const pageContent = document.getElementById("pageContent");
-    const pageTitle = document.getElementById("pageTitle");
-    const sidebar = document.getElementById("sidebar");
-
-    const pages = {
-      dashboard: {
-        title: "Dashboard",
-        icon: "bi-grid-1x2-fill",
-        description: "Your personal overview of career readiness and learning progress."
-      },
-      career: {
-        title: "Career Intelligence",
-        icon: "bi-compass-fill",
-        description: "Explore careers that match your skills, interests, and goals."
-      },
-      skills: {
-        title: "Skill Analysis",
-        icon: "bi-bar-chart-fill",
-        description: "Review your skills, proficiency levels, and improvement areas."
-      },
-      learning: {
-        title: "Learning Path",
-        icon: "bi-mortarboard-fill",
-        description: "Organize courses and track your learning milestones."
-      },
-      resume: {
-        title: "Resume Analyzer",
-        icon: "bi-file-earmark-person-fill",
-        description: "Prepare your resume for the roles you want to pursue."
-      },
-      interview: {
-        title: "Mock Interview",
-        icon: "bi-mic-fill",
-        description: "Practice interview questions and build confidence."
-      },
-      jobs: {
-        title: "Job Recommendations",
-        icon: "bi-briefcase-fill",
-        description: "Explore job opportunities aligned with your career goals."
-      },
-      placements: {
-        title: "Placement Drives",
-        icon: "bi-building-fill",
-        description: "Keep track of company drives, eligibility, and deadlines."
-      },
-      achievements: {
-        title: "Assessments & Certificates",
-        icon: "bi-award-fill",
-        description: "Keep your assessment results and learning achievements together."
-      },
-      settings: {
-        title: "Settings & Help",
-        icon: "bi-gear-fill",
-        description: "Manage your account and find support."
-      }
-    };
-
-    function renderDashboard(user) {
-      const displayName =
-        user.displayName || user.email?.split("@")[0] || "Learner";
-
-      pageContent.innerHTML = `
-        <section class="welcome">
-          <div class="row align-items-center">
-            <div class="col-9">
-              <p class="mb-2">WELCOME TO CAREERINFINITY</p>
-              <h2>Hello, ${escapeHTML(displayName)}! 👋</h2>
-              <p>Build your skills. Discover your path. Shape your future.</p>
-            </div>
-            <div class="col-3 text-end">
-              <i class="bi bi-rocket-takeoff-fill welcome-icon"></i>
-            </div>
-          </div>
-        </section>
-
-        <h5 class="section-heading mt-0">Your Career Overview</h5>
-
-        <div class="row g-3">
-          <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stat-card">
-              <div class="stat-icon"><i class="bi bi-bullseye"></i></div>
-              <div class="stat-label">Career Match Score</div>
-              <div class="stat-value">--</div>
-              <div class="stat-note">Complete your profile to calculate</div>
-            </div>
-          </div>
-
-          <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stat-card">
-              <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
-              <div class="stat-label">Profile Strength</div>
-              <div class="stat-value">--</div>
-              <div class="stat-note">Profile assessment not started</div>
-            </div>
-          </div>
-
-          <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stat-card">
-              <div class="stat-icon"><i class="bi bi-lightning-charge-fill"></i></div>
-              <div class="stat-label">Skills Assessed</div>
-              <div class="stat-value">0</div>
-              <div class="stat-note">Add skills to get started</div>
-            </div>
-          </div>
-
-          <div class="col-12 col-sm-6 col-xl-3">
-            <div class="stat-card">
-              <div class="stat-icon"><i class="bi bi-award-fill"></i></div>
-              <div class="stat-label">Certificates</div>
-              <div class="stat-value">0</div>
-              <div class="stat-note">Track your achievements</div>
-            </div>
-          </div>
-        </div>
-
-        <h5 class="section-heading">Your Progress</h5>
-        <div class="panel">
-          <div class="d-flex justify-content-between mb-2">
-            <span class="fw-bold">Career readiness</span>
-            <span class="muted">Not assessed</span>
-          </div>
-          <div class="progress mb-3">
-            <div class="progress-bar" style="width:0%"></div>
-          </div>
-          <p class="muted small mb-0">
-            Your progress will appear here as you complete profile and learning activities.
-          </p>
-        </div>
-
-        <h5 class="section-heading">Explore Your Platform</h5>
-        <div class="row g-3">
-          ${Object.entries(pages)
-            .filter(([key]) => key !== "dashboard")
-            .map(([key, page]) => `
-              <div class="col-12 col-sm-6 col-xl-4">
-                <div class="feature-card" data-card-page="${key}" role="button" tabindex="0">
-                  <div class="stat-icon"><i class="bi ${page.icon}"></i></div>
-                  <h6>${page.title}</h6>
-                  <p>${page.description}</p>
-                  <span class="arrow"><i class="bi bi-arrow-right"></i></span>
-                </div>
-              </div>
-            `).join("")}
-        </div>
-      `;
-    }
-
-    function renderFeature(key) {
-      if (key === "dashboard") {
-        renderDashboard(auth.currentUser);
-        return;
-      }
-
-      const page = pages[key];
-      if (!page) return;
-
-      pageContent.innerHTML = `
-        <div class="panel">
-          <div class="feature-page-icon">
-            <i class="bi ${page.icon}"></i>
-          </div>
-          <h3 class="fw-bold">${page.title}</h3>
-          <p class="muted">${page.description}</p>
-          <hr>
-          <h6 class="fw-bold mt-4">Coming in the next development stage</h6>
-          <p class="muted">
-            This section is part of CareerInfinity. We'll add its forms,
-            functionality, and data connections step by step.
-          </p>
-          <button class="primary-btn mt-2" id="backToDashboard">
-            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
-          </button>
-        </div>
-      `;
-
-      document.getElementById("backToDashboard").addEventListener("click", () => {
-        navigateTo("dashboard");
-      });
-    }
-
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      })[char]);
-    }
-
-    function navigateTo(key) {
-      if (!pages[key]) return;
-
-      document.querySelectorAll(".nav-link[data-page]").forEach(link => {
-        link.classList.toggle("active", link.dataset.page === key);
-      });
-
-      pageTitle.textContent = pages[key].title;
-      sidebar.classList.remove("open");
-      renderFeature(key);
-    }
-
-    document.querySelectorAll(".nav-link[data-page]").forEach(link => {
-      link.addEventListener("click", () => {
-        navigateTo(link.dataset.page);
-      });
-    });
-
-    pageContent.addEventListener("click", event => {
-      const card = event.target.closest("[data-card-page]");
-      if (card) navigateTo(card.dataset.cardPage);
-    });
-
-    pageContent.addEventListener("keydown", event => {
-      const card = event.target.closest("[data-card-page]");
-      if (card && (event.key === "Enter" || event.key === " ")) {
-        event.preventDefault();
-        navigateTo(card.dataset.cardPage);
-      }
-    });
-
-    document.getElementById("menuToggle").addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "index.html";
-      } catch (error) {
-        alert("Could not log out. Please try again.");
-        console.error(error);
-      }
-    });
+    auth = getAuth(app);
 
     onAuthStateChanged(auth, user => {
       if (!user) {
-        window.location.href = "index.html";
+        window.location.replace("index.html");
         return;
       }
-
-      document.getElementById("userName").textContent =
-        user.displayName || user.email?.split("@")[0] || "Learner";
-
-      document.getElementById("userEmail").textContent =
-        user.email || "";
-
-      navigateTo("dashboard");
+      currentUser = user;
+      $("userEmail").textContent = user.email || "Signed in";
+      $("settingsEmail").textContent = user.email || "Not available";
+      $("settingsUid").textContent = user.uid;
     });
-  </script>
-
+  }
+} catch (error) {
+  console.error(error);
+  $("userEmail").textContent = "Firebase configuration error";
+}
+</script>
 </body>
 </html>
