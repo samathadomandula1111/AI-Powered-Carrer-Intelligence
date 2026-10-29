@@ -8,7 +8,7 @@ from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
 import app
-
+s
 
 class ResumeApiTests(unittest.TestCase):
     def setUp(self):
@@ -148,6 +148,17 @@ class ResumeApiTests(unittest.TestCase):
             )
 
         self.assertEqual(response.status_code, 401)
+
+    def test_lowercase_bearer_scheme_is_accepted(self):
+        response = self.client.post(
+            "/api/analyze-resume",
+            headers={"Authorization": "bearer test-token"},
+            data={"resume": (io.BytesIO(self.create_docx()), "resume.docx")},
+            content_type="multipart/form-data",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("resume_score", response.get_json())
 
     def test_invalid_bearer_token_is_rejected(self):
         with patch.object(

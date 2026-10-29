@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from docx import Document
@@ -7,6 +6,16 @@ from io import BytesIO
 import os
 import re
 from zipfile import BadZipFile
+
+
+def get_bearer_token():
+    authorization = request.headers.get("Authorization", "")
+    if not authorization:
+        return ""
+    scheme, _, token = authorization.strip().partition(" ")
+    if not token or scheme.lower() != "bearer":
+        return ""
+    return token.strip()
 
 from google.auth.exceptions import GoogleAuthError, TransportError
 from google.auth.transport.requests import Request
@@ -87,7 +96,14 @@ def extract_resume_text(filename, content):
             text = "\n".join(paragraphs)
         else:
             raise ValueError("Please upload a PDF or DOCX resume.")
-    except (BadZipFile, PackageNotFoundError, PdfReadError, XMLSyntaxError) as error:
+    except (
+        BadZipFile,
+        PackageNotFoundError,
+        PdfReadError,
+        XMLSyntaxError,
+        TypeError,
+        OSError,
+    ) as error:
         raise ValueError("The file is invalid or could not be read.") from error
 
     text = text.strip()
@@ -217,10 +233,7 @@ def request_too_large(_error):
 
 @app.route("/api/analyze-resume", methods=["POST"])
 def analyze_resume_upload():
-    authorization = request.headers.get("Authorization", "")
-    if not authorization.startswith("Bearer "):
-        return jsonify({"error": "Please sign in before uploading a resume."}), 401
-    token = authorization[7:].strip()
+    token = get_bearer_token()
     if not token:
         return jsonify({"error": "Please sign in before uploading a resume."}), 401
     try:
