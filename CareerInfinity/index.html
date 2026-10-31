@@ -11,8 +11,12 @@
   <style>
     :root {
       color-scheme:light;
-      --ink:#17263d; --muted:#60718a; --blue:#355bd6;
-      --line:#dce5ef; --surface:#fff; --bg:#f4f7fb;
+      --ink:#191a2b; --muted:#62677a; --blue:#6555d9;
+      --line:#e7e7ef; --surface:#fff; --bg:#f8f8fb;
+    }
+    html[data-theme="dark"] {
+      color-scheme:dark; --ink:#f2f1f8; --muted:#b1b2c2; --blue:#a496ff;
+      --line:#30313e; --surface:#191a24; --bg:#11121a;
     }
     * { box-sizing:border-box; }
     body {
@@ -20,12 +24,11 @@
       display:grid; place-items:center;
       font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
       color:var(--ink);
-      background:radial-gradient(ellipse at 18% 12%,#e7edff 0,transparent 42%),var(--bg);
+      background:var(--bg);
     }
     .login-card {
       width:100%; max-width:440px; padding:36px;
-      background:var(--surface); border:1px solid var(--line); border-radius:20px;
-      box-shadow:0 20px 60px rgba(27,48,82,.1);
+      background:var(--surface); border:1px solid var(--line); border-radius:14px;
     }
     .logo { text-align:center; font-size:34px; margin-bottom:8px; }
     .brand {
@@ -40,7 +43,7 @@
     .mb-3 { margin-bottom:18px; }
     .form-control {
       display:block; width:100%; padding:12px 13px;
-      color:var(--ink); background:#fff; border:1px solid #cbd6e4; border-radius:9px;
+      color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:9px;
     }
     .form-control:focus {
       border-color:var(--blue); outline:3px solid rgba(53,91,214,.14);
@@ -63,6 +66,17 @@
     .switch-btn {
       border:0; background:none; color:#294bb8; font-weight:700;
     }
+    .theme-toggle {
+      position:fixed; top:16px; right:16px; display:grid; place-items:center;
+      width:44px; height:44px; padding:9px;
+      border:1px solid var(--line); border-radius:10px; color:var(--ink);
+      background:var(--surface); cursor:pointer;
+    }
+    .theme-toggle svg { display:block; width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .theme-icon-sun { display:none !important; }
+    html[data-theme="dark"] .theme-icon-sun { display:block !important; }
+    html[data-theme="dark"] .theme-icon-moon { display:none !important; }
+    html[data-theme="dark"] .switch-btn,html[data-theme="dark"] .show-btn { color:var(--blue); }
     #message { overflow-wrap:anywhere; font-size:14px; min-height:1.5em; }
     #message.error { color:#a32d35; }
     #message.success { color:#137c65; }
@@ -71,9 +85,21 @@
     @media(max-width:480px) { .login-card { padding:28px 22px; } }
     @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms !important; } }
   </style>
+  <script>
+    try {
+      document.documentElement.dataset.theme =
+        localStorage.getItem("careerInfinity:theme") === "dark" ? "dark" : "light";
+    } catch (error) {
+      console.error("Unable to load theme preference.", error);
+    }
+  </script>
 </head>
 
 <body>
+  <button type="button" class="theme-toggle" id="loginThemeToggle" aria-label="Switch to dark theme" title="Switch to dark theme">
+    <svg class="theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.4A8.6 8.6 0 0 1 8.6 3.8 8.7 8.7 0 1 0 20.2 15.4Z"/></svg>
+    <svg class="theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+  </button>
   <main class="login-card">
     <div class="logo" aria-hidden="true">✦</div>
     <h1 class="brand">Career<span>Infinity</span></h1>
@@ -170,6 +196,21 @@
     const confirmGroup = document.getElementById("confirmGroup");
     const subtitle = document.getElementById("subtitle");
     const switchLabel = document.getElementById("switchLabel");
+    const themeToggle = document.getElementById("loginThemeToggle");
+
+    themeToggle.setAttribute("aria-label", `Switch to ${document.documentElement.dataset.theme === "dark" ? "light" : "dark"} theme`);
+    themeToggle.title = themeToggle.getAttribute("aria-label");
+    themeToggle.addEventListener("click", () => {
+      const dark = document.documentElement.dataset.theme !== "dark";
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      themeToggle.setAttribute("aria-label", `Switch to ${dark ? "light" : "dark"} theme`);
+      themeToggle.title = themeToggle.getAttribute("aria-label");
+      try {
+        localStorage.setItem("careerInfinity:theme", dark ? "dark" : "light");
+      } catch (error) {
+        console.error("Unable to save theme preference.", error);
+      }
+    });
 
     let registerMode = false;
 

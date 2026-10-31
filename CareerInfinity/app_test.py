@@ -1,4 +1,6 @@
 import io
+import os
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -13,6 +15,12 @@ import app
 class ResumeApiTests(unittest.TestCase):
     def setUp(self):
         self.client = app.app.test_client()
+        self.database_directory = tempfile.TemporaryDirectory()
+        self.previous_database_path = app.app.config["DATABASE_PATH"]
+        app.app.config["DATABASE_PATH"] = os.path.join(
+            self.database_directory.name, "test.sqlite3"
+        )
+        self.addCleanup(self.restore_database)
         self.valid_claims = {
             "iss": f"https://securetoken.google.com/{app.FIREBASE_PROJECT_ID}",
             "sub": "test-user",
@@ -23,6 +31,10 @@ class ResumeApiTests(unittest.TestCase):
         self.token_verifier.start()
         self.addCleanup(self.token_verifier.stop)
         self.headers = {"Authorization": "Bearer test-token"}
+
+    def restore_database(self):
+        app.app.config["DATABASE_PATH"] = self.previous_database_path
+        self.database_directory.cleanup()
 
     @staticmethod
     def create_docx():
@@ -76,6 +88,8 @@ class ResumeApiTests(unittest.TestCase):
             set(result),
             {
                 "resume_score",
+                "resume_breakdown",
+                "resume_explanations",
                 "career_match_score",
                 "profile_strength",
                 "skills",
@@ -96,6 +110,12 @@ class ResumeApiTests(unittest.TestCase):
         )
         self.assertIn("Python", python_role["matched_skills"])
         self.assertIn("Django", python_role["gaps"])
+        self.assertEqual(
+            set(result["resume_breakdown"]),
+            {"skills", "projects", "impact", "structure", "keywords"},
+        )
+        self.assertEqual(set(result["resume_explanations"]), set(result["resume_breakdown"]))
+        self.assertLess(result["resume_score"], 100)
 
     def test_python_variants_match_python_developer_role(self):
         for resume_text in (
@@ -109,11 +129,123 @@ class ResumeApiTests(unittest.TestCase):
                 self.assertTrue(any(
                     skill["name"] == "Python" for skill in result["skills"]
                 ))
+                self.assertIn(
+                    next(skill["level"] for skill in result["skills"] if skill["name"] == "Python"),
+                    {"Beginner", "Intermediate", "Strong"},
+                )
                 python_role = next(
                     career for career in result["career_matches"]
                     if career["title"] == "Python Developer"
                 )
                 self.assertIn("Python", python_role["matched_skills"])
+
+    def test_resume_suggestions_are_specific_to_the_target_role(self):
+        result = app.analyze_resume(
+            "Email: graduate@example.com\nSkills: Python\nProjects: Built a small API",
+            "Python Developer",
+        )
+
+        self.assertTrue(any(
+            suggestion.startswith("ATS keyword check for Python Developer:")
+            and "SQL" in suggestion
+            for suggestion in result["suggestions"]
+        ))
+        self.assertTrue(any("Add a metric" in suggestion for suggestion in result["suggestions"]))
+        self.assertLess(result["resume_score"], 100)
+        self.assertLess(result["profile_strength"], 100)
+
+    def test_automation_and_agentic_ai_roles_match_resume_skills(self):
+        result = app.analyze_resume(
+            "Python, Playwright, test automation, APIs, workflow automation, "
+            "LLMs, RAG, AI agents",
+            "Agentic AI Engineer",
+        )
+        matches = {career["title"]: career for career in result["career_matches"]}
+
+        self.assertIn("Automation Engineer", matches)
+        self.assertIn("Agentic AI Engineer", matches)
+        self.assertIn("Playwright", matches["Automation Engineer"]["matched_skills"])
+        self.assertIn("Workflow Automation", matches["Automation Engineer"]["matched_skills"])
+        self.assertIn("AI Agents", matches["Agentic AI Engineer"]["matched_skills"])
+        self.assertIn("RAG", matches["Agentic AI Engineer"]["matched_skills"])
+        self.assertEqual(result["career_match_score"], matches["Agentic AI Engineer"]["match"])
+
+    def test_profile_is_authenticated_and_persisted_by_firebase_uid(self):
+        initial = self.client.get("/api/profile", headers=self.headers)
+        self.assertEqual(initial.status_code, 200)
+        self.assertEqual(initial.get_json()["profile"]["target_role"], "")
+        self.assertIsNone(initial.get_json()["analysis"])
+
+        updated = self.client.patch(
+            "/api/profile",
+            headers={**self.headers, "Content-Type": "application/json"},
+            json={"profile": {
+                "name": "Alex",
+                "target_role": "Frontend Developer",
+                "progress": {
+                    "selectedRole": "frontend",
+                    "progress": {"frontend": {"topics": ["0-0"], "projects": []}},
+                    "bookmarks": [],
+                    "addedSkills": ["React"],
+                    "completedSkills": [],
+                },
+                "drives": [{"company": "Example Co", "details": "Graduate engineer"}],
+                "interview_answers": {
+                    "frontend-developer-project-javascript": "I built an accessible project and tested it with keyboard navigation."
+                },
+            }},
+        )
+        self.assertEqual(updated.status_code, 200)
+        self.assertEqual(updated.get_json()["profile"]["name"], "Alex")
+
+        reloaded = self.client.get("/api/profile", headers=self.headers)
+        self.assertEqual(reloaded.get_json()["profile"]["target_role"], "Frontend Developer")
+        self.assertEqual(reloaded.get_json()["profile"]["drives"][0]["company"], "Example Co")
+        self.assertEqual(
+            reloaded.get_json()["profile"]["interview_answers"]["frontend-developer-project-javascript"],
+            "I built an accessible project and tested it with keyboard navigation.",
+        )
+        self.assertEqual(
+            reloaded.get_json()["profile"]["progress"]["progress"]["frontend"]["topics"],
+            ["0-0"],
+        )
+
+    def test_profile_requires_authentication_and_rejects_invalid_fields(self):
+        unauthorized = self.client.get("/api/profile")
+        invalid = self.client.patch(
+            "/api/profile",
+            headers={**self.headers, "Content-Type": "application/json"},
+            json={"profile": {"unexpected": "value"}},
+        )
+        self.assertEqual(unauthorized.status_code, 401)
+        self.assertEqual(invalid.status_code, 400)
+        self.assertIn("error", invalid.get_json())
+
+    def test_profile_rejects_malformed_or_oversized_interview_answers(self):
+        malformed = self.client.patch(
+            "/api/profile",
+            headers={**self.headers, "Content-Type": "application/json"},
+            json={"profile": {"interview_answers": {"Bad ID": "answer"}}},
+        )
+        oversized = self.client.patch(
+            "/api/profile",
+            headers={**self.headers, "Content-Type": "application/json"},
+            json={"profile": {"interview_answers": {"valid-id": "a" * 4001}}},
+        )
+
+        self.assertEqual(malformed.status_code, 400)
+        self.assertEqual(oversized.status_code, 400)
+
+    def test_resume_analysis_is_saved_to_the_authenticated_profile(self):
+        uploaded = self.upload(self.create_docx(), "resume.docx")
+        profile = self.client.get("/api/profile", headers=self.headers)
+
+        self.assertEqual(uploaded.status_code, 200)
+        self.assertEqual(profile.status_code, 200)
+        saved = profile.get_json()["analysis"]
+        self.assertEqual(saved["filename"], "resume.docx")
+        self.assertEqual(saved["data"]["resume_score"], uploaded.get_json()["resume_score"])
+        self.assertIn("impact", saved["data"]["resume_breakdown"])
 
     def test_pdf_upload_extracts_text(self):
         response = self.upload(self.create_pdf(), "resume.pdf")

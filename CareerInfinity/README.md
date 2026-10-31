@@ -34,17 +34,39 @@ to the frontend hosts you control.
 ## Data and API
 
 - `GET /api/health` reports whether Flask is responding.
+- `GET /api/profile` returns the signed-in user's profile, roadmap progress,
+  saved placement drives, and latest resume analysis.
+- `PATCH /api/profile` updates profile fields, roadmap progress, saved drives,
+  and interview practice answers.
+  Both profile endpoints require a valid Firebase ID token.
 - `POST /api/analyze-resume` accepts a signed-in user's `resume` PDF or DOCX,
   up to 5 MB, and returns resume, profile, and skill estimates plus ranked
   career matches with detected skills and skills to improve for each role.
-- Uploaded files are processed in memory and are not stored by the backend.
-- Learning progress, placement opportunities, and certificate names are saved
-  in browser local storage, scoped to the signed-in Firebase user on that
-  browser. This project has no database configured; this data does not sync
-  between devices.
+  The result and uploaded filename are saved to the signed-in user's profile.
+- Resume file contents are processed in memory and are not stored by the backend.
+-   profile, latest analysis, saved drives, roadmap progress, and interview practice
+  answers are stored in SQLite at `instance/career-infinity.sqlite3` by default. Set
+  `CAREERINFINITY_DB_PATH` to an absolute path on persistent storage in hosted
+  environments. Back up this database and restrict access to its directory.
+- Theme and sidebar display preferences remain in browser local storage; career
+  profile and progress data do not.
 
-The resume scores and skill matches are heuristics, not formal assessments.
+The resume score and skill matches are heuristics, not formal assessments.
+The resume score is capped below 100 and breaks down detected skills, projects,
+impact/metrics, resume structure, and role keywords. Skill levels describe
+keyword frequency in the resume; they do not prove proficiency.
 Scanned/image-only PDFs need OCR, which is not included.
+The Roadmap includes Automation Engineer and Agentic AI Engineer paths. The
+dashboard visualizes detected target-role skills and account-saved topic and
+project progress; matches remain keyword-based estimates.
+
+The Jobs & Drives page provides role matches from resume analysis and lets users
+save opportunities they find. This app does not have a live vacancy-feed
+provider or an external jobs endpoint, so it does not claim that suggested
+roles are current openings. Interview Prep creates guided practice prompts from
+the selected target role and skills detected in the latest resume analysis.
+Prompts use deterministic templates, not an AI model, and answers are saved to
+the signed-in user's profile; the app does not score or evaluate responses.
 
 ## Tests
 
