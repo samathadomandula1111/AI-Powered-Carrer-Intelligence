@@ -3,3 +3,5 @@ Flask
 Flask-Cors
 gunicorn
 pypdf
+python-docx
+google-auth
